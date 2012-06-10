@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Software Update</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="Farvor.qrc">
+    <normaloff>:/icons/update_64</normaloff>:/icons/update_64</iconset>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
