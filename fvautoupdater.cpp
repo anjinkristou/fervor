@@ -11,7 +11,7 @@ FvAutoUpdater::FvAutoUpdater(QObject *parent) :
     QObject(parent)
 {
     m_skipStarts = 1;
-    m_updateInterval = 1000; //60*60*1000; // every 1 hour
+    m_updateInterval = 60*60*1000; // every 1 hour
 }
 
 void FvAutoUpdater::AutoUpdateAccepted()
