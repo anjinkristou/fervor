@@ -6,6 +6,8 @@
 #include "fvplatform.h"
 #include "fvignoredversions.h"
 #include "fvavailableupdate.h"
+#include "fvautoupdater.h"
+
 #include <QApplication>
 #include <QtNetwork>
 #include <QMessageBox>
@@ -36,7 +38,7 @@ FvUpdater* FvUpdater::sharedUpdater()
 		mutex.lock();
 
 		if (! m_Instance) {
-			m_Instance = new FvUpdater;
+            m_Instance = new FvUpdater;
 		}
 
 		mutex.unlock();
@@ -54,7 +56,9 @@ void FvUpdater::drop()
 	mutex.unlock();
 }
 
-FvUpdater::FvUpdater() : QObject(0)
+FvUpdater::FvUpdater() : QObject(0),
+    m_autoUpdater(new FvAutoUpdater()),
+    m_updateTimer(new QTimer(this))
 {
 	m_reply = 0;
 	m_updaterWindow = 0;
@@ -65,6 +69,9 @@ FvUpdater::FvUpdater() : QObject(0)
 
 	// Translation mechanism
 	installTranslator();
+
+    connect(m_updateTimer, SIGNAL(timeout()),
+           this, SLOT(updateTimerPerformer()));
 
 #ifdef FV_DEBUG
 	// Unit tests
@@ -86,6 +93,14 @@ FvUpdater::~FvUpdater()
 	hideUpdaterWindow();
     hideAutoUpdateConfirmationDialog();
     hideUpdateCheckingDialog();
+
+    delete m_autoUpdater;
+    m_autoUpdater = 0;
+
+    // freeing the auto update timer
+    m_updateTimer->stop();
+    delete m_updateTimer;
+    m_updateTimer = 0;
 }
 
 void FvUpdater::installTranslator()
@@ -187,6 +202,13 @@ void FvUpdater::autoUpdateConfirmationDialogWasClosed()
     m_autoupdateConfirmationDialog = 0;
 }
 
+void FvUpdater::initAutoUpdater()
+{
+    if(m_autoUpdater){
+        m_autoUpdater->initAutoUpdater();
+    }
+}
+
 
 void FvUpdater::showUpdateCheckingDialog()
 {
@@ -222,6 +244,23 @@ void FvUpdater::updateCheckingDialogUpdateProgress(int progress)
     if(m_updateCheckingDialog){
         m_updateCheckingDialog->updateProgressBar(progress);
     }
+}
+
+void FvUpdater::setAutoUpdateTimerInterval(int interval)
+{
+    m_updateTimer->setInterval(interval);
+}
+
+void FvUpdater::startAutoUpdateTimer()
+{
+    if(!m_updateTimer->isActive()){
+        m_updateTimer->start();
+    }
+}
+
+void FvUpdater::stopAutoUpdateTimer()
+{
+    m_updateTimer->stop();
 }
 
 void FvUpdater::SetFeedURL(QUrl feedURL)
@@ -307,14 +346,20 @@ void FvUpdater::UpdateInstallationNotConfirmed()
 
 void FvUpdater::checkAutomaticallyForUpdates()
 {
-
+    m_autoUpdater->AutoUpdateAccepted();
     hideAutoUpdateConfirmationDialog();
 }
 
 void FvUpdater::dontCheckAutomaticallyForUpdates()
 {
-
+    m_autoUpdater->AutoUpdateRefused();
     hideAutoUpdateConfirmationDialog();
+}
+
+void FvUpdater::updateTimerPerformer()
+{
+    CheckForUpdatesSilent();
+    m_updateTimer->stop();
 }
 
 

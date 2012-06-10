@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
 	FvUpdater::sharedUpdater()->SetFeedURL("https://raw.github.com/pypt/fervor/master/sample/Appcast.xml");
 
 	// Check for updates automatically
-	FvUpdater::sharedUpdater()->CheckForUpdatesSilent();
+    //FvUpdater::sharedUpdater()->CheckForUpdatesSilent();
+    FvUpdater::sharedUpdater()->initAutoUpdater();
     FvUpdater::sharedUpdater()->AskForAutoUpdateConfirmations();
+
 
 	// Show main window
 	MainWindow w;

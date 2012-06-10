@@ -6,11 +6,13 @@
 #include <QNetworkAccessManager>
 #include <QUrl>
 #include <QXmlStreamReader>
+#include <QTimer>
 class FvUpdateWindow;
 class FvUpdateConfirmDialog;
 class FvAvailableUpdate;
 class FvAutoUpdateConfirmDialog;
 class FvUpdateCheckingDialog;
+class FvAutoUpdater;
 
 
 class FvUpdater : public QObject
@@ -38,6 +40,7 @@ public slots:
 	bool CheckForUpdatesNotSilent();
 
     bool AskForAutoUpdateConfirmations();
+    void initAutoUpdater();
 
 	//
 	// ---------------------------------------------------
@@ -52,6 +55,7 @@ protected:
     friend class FvUpdateConfirmDialog;     // Uses GetProposedUpdate() and others
     friend class FvAutoUpdateConfirmDialog;	// Uses GetProposedUpdate() and others
     friend class FvUpdateCheckingDialog;	// Uses GetProposedUpdate() and others
+    friend class FvAutoUpdater;
 	FvAvailableUpdate* GetProposedUpdate();
 
 
@@ -69,6 +73,9 @@ protected slots:
     // Auto update confirmation dialog button slots
     void checkAutomaticallyForUpdates();
     void dontCheckAutomaticallyForUpdates();
+
+    // Update timer process
+    void updateTimerPerformer();
 
 private:
 
@@ -102,6 +109,7 @@ private:
     void showAutoUpdateConfirmationDialog();                        // Show Auto update confirmation dialog
     void hideAutoUpdateConfirmationDialog();						// Hide + destroy m_autoUpdateConfirmationDialog
     void autoUpdateConfirmationDialogWasClosed();					// Sent by the auto update confirmation dialog when it gets closed
+    void initAutoU5pdater();
 
     FvUpdateCheckingDialog* m_updateCheckingDialog;					// Update checking dialog (NULL if not shown)
     void showUpdateCheckingDialog();                                // Show update checking dialog
@@ -109,6 +117,12 @@ private:
     void updateCheckingDialogWasClosed();							// Sent by the update checking dialog when it gets closed
     void updateCheckingDialogUpdateProgress(int progress);                // Update the progress bar
 
+    // Auto updater logic
+    FvAutoUpdater* m_autoUpdater;
+    QTimer* m_updateTimer;
+    void setAutoUpdateTimerInterval(int interval);
+    void startAutoUpdateTimer();
+    void stopAutoUpdateTimer();
 
 	// Available update (NULL if not fetched)
 	FvAvailableUpdate* m_proposedUpdate;

@@ -26,7 +26,8 @@ SOURCES += fvupdatewindow.cpp \
 	fvavailableupdate.cpp \
 	fvupdateconfirmdialog.cpp \
         fvautoupdateconfirmdialog.cpp \
-        fvupdatecheckingdialog.cpp
+        fvupdatecheckingdialog.cpp \
+    ../fvautoupdater.cpp
 
 HEADERS += fvupdatewindow.h \
 	fvupdater.h \
@@ -36,7 +37,8 @@ HEADERS += fvupdatewindow.h \
 	fvavailableupdate.h \
 	fvupdateconfirmdialog.h \
         fvautoupdateconfirmdialog.h \
-        fvupdatecheckingdialog.h
+        fvupdatecheckingdialog.h \
+    ../fvautoupdater.h
 
 FORMS += fvupdatewindow.ui \
 	fvupdateconfirmdialog.ui \
