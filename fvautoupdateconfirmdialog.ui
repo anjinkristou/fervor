@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FvUpdateWindow</class>
- <widget class="QWidget" name="FvUpdateWindow">
+ <class>FvAutoUpdateConfirmDialog</class>
+ <widget class="QDialog" name="FvAutoUpdateConfirmDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>528</width>
+    <height>161</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Software Update</string>
+   <string>Dialog</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_6">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
       <widget class="QLabel" name="iconLabel">
        <property name="minimumSize">
@@ -65,7 +65,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="newVersionIsAvailableLabel">
+      <widget class="QLabel" name="updateFileIsLocatedLabel">
        <property name="font">
         <font>
          <weight>75</weight>
@@ -73,66 +73,28 @@
         </font>
        </property>
        <property name="text">
-        <string>A new version of %1 is available!</string>
+        <string>Check for update automatically?</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="wouldYouLikeToDownloadLabel">
+      <widget class="QLabel" name="checkForUpdatesLabel">
        <property name="text">
-        <string>%1 %2 is now available - you have %3. Would you like to download it now?</string>
+        <string>Should %1 automatically check for updates? You can always check for updates manually from the menu.</string>
+       </property>
+       <property name="scaledContents">
+        <bool>false</bool>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string/>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="title">
-        <string>Release Notes:</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <property name="margin">
-         <number>7</number>
-        </property>
-        <item>
-         <widget class="QWebView" name="releaseNotesWebView">
-          <property name="minimumSize">
-           <size>
-            <width>160</width>
-            <height>80</height>
-           </size>
-          </property>
-          <property name="url">
-           <url>
-            <string>about:blank</string>
-           </url>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="QPushButton" name="skipThisVersionButton">
-         <property name="text">
-          <string>Skip This Version</string>
-         </property>
-        </widget>
-       </item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
@@ -147,22 +109,16 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="remindMeLaterButton">
+        <widget class="QPushButton" name="checkAutomaticallyButton">
          <property name="text">
-          <string>Remind Me Later</string>
+          <string>Check automatically</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="installUpdateButton">
+        <widget class="QPushButton" name="dontCheckButton">
          <property name="text">
-          <string>Install Update</string>
-         </property>
-         <property name="autoDefault">
-          <bool>true</bool>
-         </property>
-         <property name="default">
-          <bool>true</bool>
+          <string>Don't check</string>
          </property>
         </widget>
        </item>
@@ -172,13 +128,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QWebView</class>
-   <extends>QWidget</extends>
-   <header>QtWebKit/QWebView</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="Farvor.qrc"/>
  </resources>

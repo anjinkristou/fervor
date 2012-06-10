@@ -9,6 +9,8 @@
 class FvUpdateWindow;
 class FvUpdateConfirmDialog;
 class FvAvailableUpdate;
+class FvAutoUpdateConfirmDialog;
+class FvUpdateCheckingDialog;
 
 
 class FvUpdater : public QObject
@@ -35,6 +37,7 @@ public slots:
 	bool CheckForUpdatesSilent();
 	bool CheckForUpdatesNotSilent();
 
+    bool AskForAutoUpdateConfirmations();
 
 	//
 	// ---------------------------------------------------
@@ -45,8 +48,10 @@ public slots:
 
 protected:
 
-	friend class FvUpdateWindow;		// Uses GetProposedUpdate() and others
-	friend class FvUpdateConfirmDialog;	// Uses GetProposedUpdate() and others
+    friend class FvUpdateWindow;            // Uses GetProposedUpdate() and others
+    friend class FvUpdateConfirmDialog;     // Uses GetProposedUpdate() and others
+    friend class FvAutoUpdateConfirmDialog;	// Uses GetProposedUpdate() and others
+    friend class FvUpdateCheckingDialog;	// Uses GetProposedUpdate() and others
 	FvAvailableUpdate* GetProposedUpdate();
 
 
@@ -60,6 +65,10 @@ protected slots:
 	// Update confirmation dialog button slots
 	void UpdateInstallationConfirmed();
 	void UpdateInstallationNotConfirmed();
+
+    // Auto update confirmation dialog button slots
+    void checkAutomaticallyForUpdates();
+    void dontCheckAutomaticallyForUpdates();
 
 private:
 
@@ -88,6 +97,18 @@ private:
 	void showUpdateConfirmationDialogUpdatedWithCurrentUpdateProposal();	// Show update confirmation dialog
 	void hideUpdateConfirmationDialog();									// Hide + destroy m_updateConfirmationDialog
 	void updateConfirmationDialogWasClosed();								// Sent by the update confirmation dialog when it gets closed
+
+    FvAutoUpdateConfirmDialog* m_autoupdateConfirmationDialog;		// Auto Update confirmation dialog (NULL if not shown)
+    void showAutoUpdateConfirmationDialog();                        // Show Auto update confirmation dialog
+    void hideAutoUpdateConfirmationDialog();						// Hide + destroy m_autoUpdateConfirmationDialog
+    void autoUpdateConfirmationDialogWasClosed();					// Sent by the auto update confirmation dialog when it gets closed
+
+    FvUpdateCheckingDialog* m_updateCheckingDialog;					// Update checking dialog (NULL if not shown)
+    void showUpdateCheckingDialog();                                // Show update checking dialog
+    void hideUpdateCheckingDialog();								// Hide + destroy m_updateCheckingDialog
+    void updateCheckingDialogWasClosed();							// Sent by the update checking dialog when it gets closed
+    void updateCheckingDialogUpdateProgress(int progress);                // Update the progress bar
+
 
 	// Available update (NULL if not fetched)
 	FvAvailableUpdate* m_proposedUpdate;

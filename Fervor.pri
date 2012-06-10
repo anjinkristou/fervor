@@ -24,7 +24,9 @@ SOURCES += fvupdatewindow.cpp \
 	fvplatform.cpp \
 	fvignoredversions.cpp \
 	fvavailableupdate.cpp \
-	fvupdateconfirmdialog.cpp
+	fvupdateconfirmdialog.cpp \
+    ../fvautoupdateconfirmdialog.cpp \
+    ../fvupdatecheckingdialog.cpp
 
 HEADERS += fvupdatewindow.h \
 	fvupdater.h \
@@ -32,10 +34,16 @@ HEADERS += fvupdatewindow.h \
 	fvplatform.h \
 	fvignoredversions.h \
 	fvavailableupdate.h \
-	fvupdateconfirmdialog.h
+	fvupdateconfirmdialog.h \
+    ../fvautoupdateconfirmdialog.h \
+    ../fvupdatecheckingdialog.h
 
 FORMS += fvupdatewindow.ui \
-	fvupdateconfirmdialog.ui
+	fvupdateconfirmdialog.ui \
+    ../fvautoupdateconfirmdialog.ui \
+    ../fvupdatecheckingdialog.ui
 
 TRANSLATIONS += fervor_lt.ts
 CODECFORTR = UTF-8
+
+RESOURCES += Farvor.qrc

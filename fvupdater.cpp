@@ -1,6 +1,8 @@
 #include "fvupdater.h"
 #include "fvupdatewindow.h"
 #include "fvupdateconfirmdialog.h"
+#include "fvautoupdateconfirmdialog.h"
+#include "fvupdatecheckingdialog.h"
 #include "fvplatform.h"
 #include "fvignoredversions.h"
 #include "fvavailableupdate.h"
@@ -57,6 +59,8 @@ FvUpdater::FvUpdater() : QObject(0)
 	m_reply = 0;
 	m_updaterWindow = 0;
 	m_updateConfirmationDialog = 0;
+    m_autoupdateConfirmationDialog = 0;
+    m_updateCheckingDialog = 0;
 	m_proposedUpdate = 0;
 
 	// Translation mechanism
@@ -80,6 +84,8 @@ FvUpdater::~FvUpdater()
 
 	hideUpdateConfirmationDialog();
 	hideUpdaterWindow();
+    hideAutoUpdateConfirmationDialog();
+    hideUpdateCheckingDialog();
 }
 
 void FvUpdater::installTranslator()
@@ -152,6 +158,71 @@ void FvUpdater::updateConfirmationDialogWasClosed()
 	m_updateConfirmationDialog = 0;
 }
 
+void FvUpdater::showAutoUpdateConfirmationDialog()
+{
+    // Destroy dialog if already exists
+    hideAutoUpdateConfirmationDialog();
+
+    // Create a new window
+    m_autoupdateConfirmationDialog = new FvAutoUpdateConfirmDialog();
+    m_autoupdateConfirmationDialog->show();
+}
+
+void FvUpdater::hideAutoUpdateConfirmationDialog()
+{
+    if (m_autoupdateConfirmationDialog) {
+        if (! m_autoupdateConfirmationDialog->close()) {
+            qWarning() << "Auto Update confirmation dialog didn't close, leaking memory from now on";
+        }
+
+        // not deleting because of Qt::WA_DeleteOnClose
+
+        m_autoupdateConfirmationDialog = 0;
+    }
+}
+
+void FvUpdater::autoUpdateConfirmationDialogWasClosed()
+{
+    // (Re-)nullify a pointer to a destroyed QWidget or you're going to have a bad time.
+    m_autoupdateConfirmationDialog = 0;
+}
+
+
+void FvUpdater::showUpdateCheckingDialog()
+{
+    // Destroy dialog if already exists
+    hideUpdateCheckingDialog();
+
+    // Create a new window
+    m_updateCheckingDialog = new FvUpdateCheckingDialog();
+    m_updateCheckingDialog->show();
+}
+
+void FvUpdater::hideUpdateCheckingDialog()
+{
+    if (m_updateCheckingDialog) {
+        if (! m_updateCheckingDialog->close()) {
+            qWarning() << "Update checking dialog didn't close, leaking memory from now on";
+        }
+
+        // not deleting because of Qt::WA_DeleteOnClose
+
+        m_updateCheckingDialog = 0;
+    }
+}
+
+void FvUpdater::updateCheckingDialogWasClosed()
+{
+    // (Re-)nullify a pointer to a destroyed QWidget or you're going to have a bad time.
+    m_updateCheckingDialog = 0;
+}
+
+void FvUpdater::updateCheckingDialogUpdateProgress(int progress)
+{
+    if(m_updateCheckingDialog){
+        m_updateCheckingDialog->updateProgressBar(progress);
+    }
+}
 
 void FvUpdater::SetFeedURL(QUrl feedURL)
 {
@@ -231,7 +302,19 @@ void FvUpdater::UpdateInstallationNotConfirmed()
 	qDebug() << "Do not confirm update installation";
 
 	hideUpdateConfirmationDialog();	// if any; shouldn't be shown at this point, but who knows
-	// leave the "update proposal window" inact
+    // leave the "update proposal window" inact
+}
+
+void FvUpdater::checkAutomaticallyForUpdates()
+{
+
+    hideAutoUpdateConfirmationDialog();
+}
+
+void FvUpdater::dontCheckAutomaticallyForUpdates()
+{
+
+    hideAutoUpdateConfirmationDialog();
 }
 
 
@@ -281,7 +364,13 @@ bool FvUpdater::CheckForUpdatesSilent()
 
 bool FvUpdater::CheckForUpdatesNotSilent()
 {
-	return CheckForUpdates(false);
+    return CheckForUpdates(false);
+}
+
+bool FvUpdater::AskForAutoUpdateConfirmations()
+{
+    showAutoUpdateConfirmationDialog();
+    return true;
 }
 
 
@@ -290,6 +379,10 @@ void FvUpdater::startDownloadFeed(QUrl url)
 	m_xml.clear();
 
 	m_reply = m_qnam.get(QNetworkRequest(url));
+
+    if(!m_silentAsMuchAsItCouldGet){
+        showUpdateCheckingDialog();
+    }
 
 	connect(m_reply, SIGNAL(readyRead()), this, SLOT(httpFeedReadyRead()));
 	connect(m_reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(httpFeedUpdateDataReadProgress(qint64, qint64)));
@@ -320,12 +413,15 @@ void FvUpdater::httpFeedUpdateDataReadProgress(qint64 bytesRead,
 	Q_UNUSED(totalBytes);
 
 	if (m_httpRequestAborted) {
+        hideUpdateCheckingDialog();
 		return;
 	}
+    updateCheckingDialogUpdateProgress((int)((bytesRead * 100) / totalBytes));
 }
 
 void FvUpdater::httpFeedDownloadFinished()
 {
+    hideUpdateCheckingDialog();
 	if (m_httpRequestAborted) {
 		m_reply->deleteLater();
 		return;
