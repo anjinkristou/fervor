@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     QApplication::setApplicationVersion("1.0");
 
 	// Set feed URL before doing anything else
-	FvUpdater::sharedUpdater()->SetFeedURL("https://raw.github.com/pypt/fervor/master/sample/Appcast.xml");
+	FvUpdater::sharedUpdater()->SetFeedURL("http://pypt.github.com/fervor/Appcast.xml");
 
 	// Check for updates automatically
     //FvUpdater::sharedUpdater()->CheckForUpdatesSilent();

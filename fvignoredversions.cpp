@@ -1,6 +1,7 @@
 #include "fvignoredversions.h"
 #include "fvversioncomparator.h"
 #include <QSettings>
+#include <QApplication>
 #include <string>
 
 // QSettings key for the latest skipped version
@@ -25,7 +26,18 @@ bool FVIgnoredVersions::VersionIsIgnored(QString version)
 		return true;
 	}
 
-	QSettings settings;
+#ifdef Q_WS_MAC
+	QSettings settings(QSettings::NativeFormat,
+					   QSettings::UserScope,
+					   QApplication::organizationDomain(),
+					   QApplication::applicationName());
+#else
+	QSettings settings(QSettings::NativeFormat,
+					   QSettings::UserScope,
+					   QApplication::organizationName(),
+					   QApplication::applicationName());
+#endif
+
 	if (settings.contains(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY)) {
 		QString lastSkippedVersion = settings.value(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY).toString();
 		if (version == lastSkippedVersion) {
@@ -56,7 +68,18 @@ void FVIgnoredVersions::IgnoreVersion(QString version)
 		return;
 	}
 
-	QSettings settings;
+#ifdef Q_WS_MAC
+	QSettings settings(QSettings::NativeFormat,
+					   QSettings::UserScope,
+					   QApplication::organizationDomain(),
+					   QApplication::applicationName());
+#else
+	QSettings settings(QSettings::NativeFormat,
+					   QSettings::UserScope,
+					   QApplication::organizationName(),
+					   QApplication::applicationName());
+#endif
+
 	settings.setValue(FV_IGNORED_VERSIONS_LATEST_SKIPPED_VERSION_KEY, version);
 
 	return;
